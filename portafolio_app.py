@@ -265,6 +265,7 @@ def plot_prophet(data, n_forecast=1460):
 def render_basic_line():
     
         options = {
+            "tooltip": {"trigger": "axis"},
             "xAxis": {
                 "type": "category",
                 "data":data['ds'].tolist(),
@@ -403,20 +404,20 @@ plot_forecast = plot_prophet(data, periods)
 
 st.title(f"Prediccion de Ventas : {stock}")
 
-st.subheader('Ventas historicas')
-st.pyplot(plot_price)
+st.subheader('Ventas por dia historicas')
+render_basic_line()
 
 st.subheader('Forecast - Prophet')
 st.pyplot(plot_forecast)
 
-st.subheader('Tabla Estudiada')
-# st.pyplot(plot_vol)
 
-st.dataframe(data)
-st.subheader('grafico con echarts')
-render_basic_line()
+ 
+
 st.subheader('Top 5 Categorias mas vendidas')
 render_stacked_line_chart()
 
 
+st.subheader('Tabla Estudiada')
+ 
 
+st.dataframe(data)
