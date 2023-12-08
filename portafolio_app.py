@@ -21,10 +21,10 @@ def get_data(stock, start_time, end_time):
         df = pd.read_csv('/data/Belleza y SaludDSY.csv',sep=';')
         return df
     elif stock == 'Auto':
-        df = pd.read_csv('/data/AutoDSY.csv',sep=';')
+        df = pd.read_csv('data/AutoDSY.csv',sep=';')
         return df
     elif stock == 'Ocio y Deportes':
-        df = pd.read_csv('/data/Ocio y DeportesDSY.csv',sep=';')
+        df = pd.read_csv('data/Ocio y DeportesDSY.csv',sep=';')
         return df
     elif stock == "Accesorios de Computadoras":
         df = pd.read_csv('/data/Accesorios de ComputadorasDSY.csv',sep=';')
