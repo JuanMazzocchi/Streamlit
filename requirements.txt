@@ -4,4 +4,4 @@ matplotlib
 numpy
 prophet
 mplcyberpunk
- 
+streamlit-echarts>=0.4.0

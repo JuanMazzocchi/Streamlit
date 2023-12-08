@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 import mplcyberpunk
 # import numpy as np
 from prophet import Prophet
+import json
+
 # import matplotlib.dates as mdates
 
 plt.style.use("dark_background")
@@ -15,7 +17,37 @@ plt.style.use("dark_background")
 #### Funciones Principales
 ###########################
 
-def get_data(stock, start_time, end_time):
+st.markdown(
+    """
+    <style>
+        section {
+            background-color: #000000; /* Puedes cambiar el color a tu preferencia */
+        }
+           /* Cambia el color del título (h1) */
+         h1 {
+            color:white; /* Puedes cambiar el color a tu preferencia */
+        }
+
+        /* Cambia el color del subtitulo (h2) */
+         h2 {
+            color:white; /* Puedes cambiar el color a tu preferencia */
+        }
+         h3 {
+            color:white; /* Puedes cambiar el color a tu preferencia */
+        }
+         body {
+            width: 90%;  /* Puedes ajustar este valor según tus preferencias */
+            margin: auto;
+        }
+        .block-container{
+            width: 90% !important;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+def get_data(stock):
     
     if stock=="Belleza y Salud":
         df = pd.read_csv('data/Belleza y SaludDSY.csv',sep=';')
@@ -48,8 +80,11 @@ def get_data(stock, start_time, end_time):
         df = pd.read_csv('data/JuguetesDSY.csv',sep=';')
         return df
         
+from streamlit_echarts import st_echarts
+from streamlit_echarts import JsCode
 
-        
+
+  
 
 # def get_levels(dfvar):
         
@@ -227,22 +262,121 @@ def plot_prophet(data, n_forecast=1460):
     plt.plot(forecast.ds, forecast.yhat, color='green', linewidth=0.5)
     return fig1
 
+def render_basic_line():
+    
+        options = {
+            "xAxis": {
+                "type": "category",
+                "data":data['ds'].tolist(),
+            },
+            "yAxis": {"type": "value"},
+            "series": [
+                {"data": data['y'].tolist(), "type": "line"}
+            ],
+        }
+        st_echarts(
+            options=options, height="400px",
+        )
+        # st_echarts(
+        #     options=options, height="400px", theme="dark",
+        # )
+        
+        
+def render_stacked_line_chart():
+    
+    rango_fechas = pd.date_range(start='2016-9', end='2018-08', freq='MS')
+    lista_meses = [fecha.strftime('%Y-%m') for fecha in rango_fechas]
+    
+    
+    belleza=pd.read_csv('data/Belleza y SaludDSY.csv',sep=';')
+    belleza['ds']=pd.to_datetime(belleza['ds'])
+    belleza.set_index('ds',inplace=True)
+    belleza=belleza.resample('M').sum()
+    
+    relojes=pd.read_csv('data/Relojes y RegalosDSY.csv',sep=';')
+    relojes['ds']=pd.to_datetime(relojes['ds'])
+    relojes.set_index('ds',inplace=True)
+    relojes=relojes.resample('M').sum()
+    
+    mesa=pd.read_csv('data/Mesa, Baño , CamaDSY.csv',sep=';')
+    mesa['ds']=pd.to_datetime(mesa['ds'])
+    mesa.set_index('ds',inplace=True)
+    mesa=mesa.resample('M').sum()
+    
+    ocio=pd.read_csv('data/Ocio y DeportesDSY.csv',sep=';')
+    ocio['ds']=pd.to_datetime(ocio['ds'])
+    ocio.set_index('ds',inplace=True)
+    ocio=ocio.resample('M').sum()
+    
+    compu=pd.read_csv('data/Accesorios de ComputadorasDSY.csv',sep=';')
+    compu['ds']=pd.to_datetime(compu['ds'])
+    compu.set_index('ds',inplace=True)
+    compu=compu.resample('M').sum()
+    
+    
+    options = {
+        # "title": {"text":"Categorias \n","color":'white'},
+        "tooltip": {"trigger": "axis"},
+        "legend": {"data": ["Belleza y Salud", "Relojes y Regalos", "Mesa, Baño y Cama", "Ocio y Deporte", "Acc. de Computacion"]},
+        "grid": {"left": "3%", "right": "4%", "bottom": "3%", "containLabel": True},
+        "toolbox": {"feature": {"saveAsImage": {}}},
+        "xAxis": {
+            "type": "category",
+            "boundaryGap": False,
+            "data": lista_meses,
+        },
+        "yAxis": {"type": "value"},
+        "series": [
+            {
+                "name": "Belleza y Salud",
+                "type": "line",
+                # "stack": "总量",
+                "data": belleza['y'].tolist(),
+            },
+            {
+                "name": "Relojes y Regalos",
+                "type": "line",
+                # "stack": "总量",
+                "data":  relojes['y'].tolist(),
+            },
+            {
+                "name": "Mesa, Baño y Cama",
+                "type": "line",
+                # "stack": "总量",
+                "data": mesa['y'].tolist(),
+            },
+            {
+                "name": "Ocio y Deporte",
+                "type": "line",
+                # "stack": "总量",
+                "data": ocio['y'].tolist(),
+            },
+            {
+                "name": "Acc. de Computacion",
+                "type": "line",
+                # "stack": "总量",
+                "data": compu['y'].tolist(),
+            },
+        ],
+    }
+    # mplcyberpunk.add_glow_effects()
+    st_echarts(options=options, height="400px",theme='dark')
 
 ###########################
 #### LAYOUT - Sidebar
 ###########################
 
-logo_pypro = Image.open('assets/pypro_logo_plot.png')
+logo_pypro = Image.open('assets/g7logo3.jpg')
 with st.sidebar:
     st.image(logo_pypro)
     stock = st.selectbox('Categoria', ['Belleza y Salud', 'Auto', 'Ocio y Deportes','Accesorios de Computadoras', 'Decoración de muebles','Mesa, Baño , Cama', 'Cosas Interesantes','Artículos para el hogar', 'Relojes y Regalos', 'Juguetes'], index=1)
     pandemia=st.checkbox('Añadir efecto pandemia', value=False)
-    start_time = st.date_input(
-                    "Fecha de Inicio",
-                    datetime.date(2019, 7, 6))
-    end_time = st.date_input(
-                    "Fecha Final",
-                    datetime.date(2022, 10, 6))
+    # start_time = st.date_input(
+    #                 "Fecha de Inicio",
+    #                 datetime.date(2019, 7, 6))
+    # end_time = st.date_input(
+    #                 "Fecha Final",
+    #                 datetime.date(2022, 10, 6))
     periods = st.number_input('Periodos Forecast', value=1460, min_value=1, max_value=5000)
 
 
@@ -250,7 +384,7 @@ with st.sidebar:
 #### DATA - Funciones sobre inputs
 ###########################
 
-data = get_data(stock, start_time.strftime("%Y-%m-%d"), end_time.strftime("%Y-%m-%d"))
+data = get_data(stock)
 plot_price = plot_close_price(data)
 
 # df_ret = daily_returns(data)
@@ -277,6 +411,10 @@ st.subheader('Tabla Estudiada')
 # st.pyplot(plot_vol)
 
 st.dataframe(data)
+st.subheader('grafico con echarts')
+render_basic_line()
+st.subheader('Top 5 Categorias mas vendidas')
+render_stacked_line_chart()
 
 
 
