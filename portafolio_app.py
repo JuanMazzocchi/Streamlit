@@ -284,7 +284,7 @@ def render_basic_line():
         
 def render_stacked_line_chart():
     
-    rango_fechas = pd.date_range(start='2016-9', end='2018-08', freq='MS')
+    rango_fechas = pd.date_range(start='2016-10', end='2018-08', freq='MS')
     lista_meses = [fecha.strftime('%Y-%m') for fecha in rango_fechas]
     
     
@@ -292,6 +292,8 @@ def render_stacked_line_chart():
     belleza['ds']=pd.to_datetime(belleza['ds'])
     belleza.set_index('ds',inplace=True)
     belleza=belleza.resample('M').sum()
+    fecha_a_eliminar = pd.to_datetime('2016-09-30')
+    belleza = belleza[belleza.index != fecha_a_eliminar]
     
     relojes=pd.read_csv('data/Relojes y RegalosDSY.csv',sep=';')
     relojes['ds']=pd.to_datetime(relojes['ds'])
