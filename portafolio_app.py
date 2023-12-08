@@ -233,7 +233,7 @@ plot_forecast = plot_prophet(data, periods)
 #### LAYOUT - Render Final
 ###########################
 
-st.title("Prediccion de Ventas")
+st.title(f"Prediccion de Ventas : {stock}")
 
 st.subheader('Ventas historicas')
 st.pyplot(plot_price)
