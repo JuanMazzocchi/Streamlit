@@ -108,6 +108,9 @@ def plot_close_price(data):
         'weight': 'normal',
         'size': 10,
         }
+    options={
+        'tooltip':{'trigger': 'axis'}
+    }
 
 
     fig = plt.figure(figsize=(10,6))
@@ -175,7 +178,35 @@ def plot_close_price(data):
 def plot_prophet(data, n_forecast=1460):
     # data_prophet = data.reset_index().copy()
     # data_prophet.rename(columns={'Date':'ds','Close':'y'}, inplace=True)
+    if pandemia == True:
+        m = Prophet(yearly_seasonality= True, uncertainty_samples = 50, mcmc_samples=50, interval_width= 0.6)
+        m.fit(data[['ds','y']])
 
+        future = m.make_future_dataframe(periods=n_forecast)
+        forecast = m.predict(future)
+        
+        forecast.loc[forecast.ds > '2020-01-01'  , 'yhat']*=1.4
+        
+        forecast.loc[forecast.ds > '2020-01-01'  , 'yhat_lower']*=1.4
+        
+        forecast.loc[forecast.ds > '2020-01-01' , 'yhat_upper']*=1.4
+        fig1 = m.plot(forecast)
+        # background = plt.imread('assets/logo_source.png')
+        mplcyberpunk.add_glow_effects()
+        ax = plt.gca()
+        # ax.figure.figimage(background, 40, 40, alpha=.15, zorder=1)
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_visible(False)
+        plt.grid(True,color='gray', linestyle='-', linewidth=0.4)
+        plt.xticks(rotation=45,  ha='right')
+        plt.ylabel('Ventas')
+        plt.xlabel('Fecha')
+        plt.plot(forecast.ds, forecast.yhat, color='green', linewidth=0.5)
+        return fig1
+        
+        
+         
     m = Prophet(yearly_seasonality= True, uncertainty_samples = 50, mcmc_samples=50, interval_width= 0.6)
     m.fit(data[['ds','y']])
 
@@ -205,6 +236,7 @@ logo_pypro = Image.open('assets/pypro_logo_plot.png')
 with st.sidebar:
     st.image(logo_pypro)
     stock = st.selectbox('Categoria', ['Belleza y Salud', 'Auto', 'Ocio y Deportes','Accesorios de Computadoras', 'Decoración de muebles','Mesa, Baño , Cama', 'Cosas Interesantes','Artículos para el hogar', 'Relojes y Regalos', 'Juguetes'], index=1)
+    pandemia=st.checkbox('Añadir efecto pandemia', value=False)
     start_time = st.date_input(
                     "Fecha de Inicio",
                     datetime.date(2019, 7, 6))
