@@ -18,34 +18,34 @@ plt.style.use("dark_background")
 def get_data(stock, start_time, end_time):
     
     if stock=="Belleza y Salud":
-        df = pd.read_csv('../curso_streamlit/data/Belleza y SaludDSY.csv',sep=';')
+        df = pd.read_csv('data/Belleza y SaludDSY.csv',sep=';')
         return df
     elif stock == 'Auto':
-        df = pd.read_csv('../curso_streamlit/data/AutoDSY.csv',sep=';')
+        df = pd.read_csv('data/AutoDSY.csv',sep=';')
         return df
     elif stock == 'Ocio y Deportes':
-        df = pd.read_csv('../curso_streamlit/data/Ocio y DeportesDSY.csv',sep=';')
+        df = pd.read_csv('data/Ocio y DeportesDSY.csv',sep=';')
         return df
     elif stock == "Accesorios de Computadoras":
-        df = pd.read_csv('../curso_streamlit/data/Accesorios de ComputadorasDSY.csv',sep=';')
+        df = pd.read_csv('data/Accesorios de ComputadorasDSY.csv',sep=';')
         return df
     elif stock == "Decoración de muebles":
-        df = pd.read_csv('../curso_streamlit/data/Decoración de mueblesDSY.csv',sep=';')
+        df = pd.read_csv('data/Decoración de mueblesDSY.csv',sep=';')
         return df
     elif stock == "Mesa, Baño , Cama":
-        df = pd.read_csv('../curso_streamlit/data/Mesa, Baño , CamaDSY.csv',sep=';')
+        df = pd.read_csv('data/Mesa, Baño , CamaDSY.csv',sep=';')
         return df
     elif stock == "Cosas Interesantes":
-        df = pd.read_csv('../curso_streamlit/data/Cosas InteresantesDSY.csv',sep=';')
+        df = pd.read_csv('data/Cosas InteresantesDSY.csv',sep=';')
         return df
     elif stock == "Artículos para el hogar":
-        df = pd.read_csv('../curso_streamlit/data/Artículos para el hogarDSY.csv',sep=';')
+        df = pd.read_csv('data/Artículos para el hogarDSY.csv',sep=';')
         return df
     elif stock == "Relojes y Regalos":
-        df = pd.read_csv('../curso_streamlit/data/Relojes y RegalosDSY.csv',sep=';')
+        df = pd.read_csv('data/Relojes y RegalosDSY.csv',sep=';')
         return df
     elif stock == "Juguetes":
-        df = pd.read_csv('../curso_streamlit/data/JuguetesDSY.csv',sep=';')
+        df = pd.read_csv('data/JuguetesDSY.csv',sep=';')
         return df
         
 
