@@ -1,14 +1,14 @@
 import streamlit as st
 import pandas as pd
-import pandas_datareader.data as web
+# import pandas_datareader.data as web
 import datetime
 from PIL import Image
 import matplotlib.pyplot as plt
-import matplotlib as mpl
+# import matplotlib as mpl
 import mplcyberpunk
-import numpy as np
+# import numpy as np
 from prophet import Prophet
-import matplotlib.dates as mdates
+# import matplotlib.dates as mdates
 
 plt.style.use("dark_background")
 ###########################
