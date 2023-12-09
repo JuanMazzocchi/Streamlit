@@ -9,8 +9,8 @@ import mplcyberpunk
 # import numpy as np
 from prophet import Prophet
 import json
-
 # import matplotlib.dates as mdates
+import plotly.express as px
 
 plt.style.use("dark_background")
 ###########################
@@ -83,48 +83,7 @@ def get_data(stock):
 from streamlit_echarts import st_echarts
 from streamlit_echarts import JsCode
 
-
-  
-
-# def get_levels(dfvar):
-        
-
-#     def isSupport(df,i):
-#         support = df['low'][i] < df['low'][i-1]  and df['low'][i] < df['low'][i+1] and df['low'][i+1] < df['low'][i+2] and df['low'][i-1] < df['low'][i-2]
-#         return support
-
-#     def isResistance(df,i):
-#         resistance = df['high'][i] > df['high'][i-1]  and df['high'][i] > df['high'][i+1] and df['high'][i+1] > df['high'][i+2] and df['high'][i-1] > df['high'][i-2]
-#         return resistance
-
-#     def isFarFromLevel(l, levels, s):
-#         level = np.sum([abs(l-x[0]) < s  for x in levels])
-#         return  level == 0
-    
-    
-#     df = dfvar.copy()
-#     df.rename(columns={'High':'high','Low':'low'}, inplace=True)
-#     s =  np.mean(df['high'] - df['low'])
-#     levels = []
-#     for i in range(2,df.shape[0]-2):
-#         if isSupport(df,i):  
-#             levels.append((i,df['low'][i]))
-#         elif isResistance(df,i):
-#             levels.append((i,df['high'][i]))
-
-#     filter_levels = []
-#     for i in range(2,df.shape[0]-2):
-#         if isSupport(df,i):
-#             l = df['low'][i]
-#             if isFarFromLevel(l, levels, s):
-#                 filter_levels.append((i,l))
-#         elif isResistance(df,i):
-#             l = df['high'][i]
-#             if isFarFromLevel(l, levels, s):
-#                 filter_levels.append((i,l))
-
-#     return filter_levels
-
+ 
 def plot_close_price(data):
 
 
@@ -166,50 +125,8 @@ def plot_close_price(data):
     plt.grid(True,color='gray', linestyle='-', linewidth=0.2)
     return fig
 
-# def daily_returns(df):
-#     df = df.sort_index(ascending=True)
-#     df['returns'] = np.log(df['Close']).diff()
-#     return df
-
-# def returns_vol(df):
-#     df['volatility'] = df.returns.rolling(12).std()
-#     return df
-
-# def plot_volatility(df_vol):
-#     background = plt.imread('assets/logo_source.png')
-#     logo = plt.imread('assets/pypro_logo_plot.png')
-#     font = {'family': 'sans-serif',
-#             'color':  'white',
-#             'weight': 'normal',
-#             'size': 16,
-#             }
-
-#     font_sub = {'family': 'sans-serif',
-#             'color':  'white',
-#             'weight': 'normal',
-#             'size': 10,
-#             }
-
-
-#     df_plot = df_vol.copy()
-#     fig = plt.figure(figsize=(10,6))
-#     plt.plot(df_plot.index, df_plot.returns, color='dodgerblue', linewidth=0.5)
-#     plt.plot(df_plot.index, df_plot.volatility, color='darkorange', linewidth=1)
-#     mplcyberpunk.add_glow_effects()
-#     plt.ylabel('% Porcentaje')
-#     plt.xticks(rotation=45,  ha='right')
-#     ax = plt.gca()
-#     ax.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.3f}'))
-#     #ax.figure.figimage(logo,  10, 1000, alpha=.99, zorder=1)
-#     ax.figure.figimage(background, 40, 40, alpha=.15, zorder=1)
-#     ax.spines['top'].set_visible(False)
-#     ax.spines['right'].set_visible(False)
-#     ax.spines['left'].set_visible(False)
-#     plt.grid(True,color='gray', linestyle='-', linewidth=0.2)
-#     plt.legend(('Retornos Diarios', 'Volatilidad Móvil'), frameon=False)
-#     return fig
-
-
+    
+    
 def plot_prophet(data, n_forecast=1460):
     # data_prophet = data.reset_index().copy()
     # data_prophet.rename(columns={'Date':'ds','Close':'y'}, inplace=True)
@@ -238,6 +155,7 @@ def plot_prophet(data, n_forecast=1460):
         plt.ylabel('Ventas')
         plt.xlabel('Fecha')
         plt.plot(forecast.ds, forecast.yhat, color='green', linewidth=0.5)
+        fig1.patch.set_facecolor('lightgray')
         return fig1
         
         
@@ -249,7 +167,7 @@ def plot_prophet(data, n_forecast=1460):
     forecast = m.predict(future)
     fig1 = m.plot(forecast)
     # background = plt.imread('assets/logo_source.png')
-    mplcyberpunk.add_glow_effects()
+    # mplcyberpunk.add_glow_effects()
     ax = plt.gca()
     # ax.figure.figimage(background, 40, 40, alpha=.15, zorder=1)
     ax.spines['top'].set_visible(False)
@@ -259,9 +177,54 @@ def plot_prophet(data, n_forecast=1460):
     plt.xticks(rotation=45,  ha='right')
     plt.ylabel('Ventas')
     plt.xlabel('Fecha')
+    
     plt.plot(forecast.ds, forecast.yhat, color='green', linewidth=0.5)
     return fig1
 
+    
+def prueba(data, n_forecast=1460):
+    # data_prophet = data.reset_index().copy()
+    # data_prophet.rename(columns={'Date':'ds','Close':'y'}, inplace=True)
+    if pandemia == True:
+        m = Prophet(yearly_seasonality= True, uncertainty_samples = 50, mcmc_samples=50, interval_width= 0.6)
+        m.fit(data[['ds','y']])
+
+        future = m.make_future_dataframe(periods=n_forecast)
+        forecast = m.predict(future)
+        
+        forecast.loc[forecast.ds > '2020-01-01'  , 'yhat']*=1.4
+        
+        forecast.loc[forecast.ds > '2020-01-01'  , 'yhat_lower']*=1.4
+        
+        forecast.loc[forecast.ds > '2020-01-01' , 'yhat_upper']*=1.4
+        
+        plt.plot(forecast['ds'],forecast['yhat'], label='Prediccion')
+        plt.plot(forecast['ds'],forecast['yhat_upper'], label='Max Prediccion')
+        plt.plot(forecast['ds'],forecast['yhat_lower'], label='Min Prediccion')
+        plt.fill_between(forecast['ds'], forecast['yhat_upper'],forecast['yhat_lower'], color='lightblue', alpha=0.3, label='Margenes de error')
+        plt.show()
+        
+        
+        
+         
+    m = Prophet(yearly_seasonality= True, uncertainty_samples = 50, mcmc_samples=50, interval_width= 0.6)
+    m.fit(data[['ds','y']])
+
+    future = m.make_future_dataframe(periods=n_forecast)
+    forecast = m.predict(future)
+    plt.plot(forecast['ds'],forecast['yhat'], label='Prediccion')
+    plt.plot(forecast['ds'],forecast['yhat_upper'], label='Max Prediccion')
+    plt.plot(forecast['ds'],forecast['yhat_lower'], label='Min Prediccion')
+    plt.fill_between(forecast['ds'], forecast['yhat_upper'],forecast['yhat_lower'], color='lightblue', alpha=0.3, label='Margenes de error')
+    plt.show()
+    
+     
+    
+# def imagen(forecast):
+    
+    
+    
+        
 def render_basic_line():
     
         options = {
@@ -364,7 +327,9 @@ def render_stacked_line_chart():
     }
     # mplcyberpunk.add_glow_effects()
     st_echarts(options=options, height="400px",theme='dark')
-
+    
+ 
+    
 ###########################
 #### LAYOUT - Sidebar
 ###########################
@@ -380,7 +345,7 @@ with st.sidebar:
     # end_time = st.date_input(
     #                 "Fecha Final",
     #                 datetime.date(2022, 10, 6))
-    periods = st.number_input('Periodos Forecast', value=1460, min_value=1, max_value=5000)
+    periods = st.number_input('Dias de Forecast (La muestra tiene 602)', value=1460, min_value=1, max_value=5000)
 
 
 ###########################
@@ -410,8 +375,13 @@ render_basic_line()
 st.subheader('Forecast - Prophet')
 st.pyplot(plot_forecast)
 
-
+st.subheader('Plotly')
  
+# st.plotly_chart(plot_forecast)
+# plooooty(data)
+# st.plotly_chart(imgPloyly(plooooty(data)))
+ 
+st.plotly_chart(plot_forecast, use_container_width=True, theme='streamlit')
 
 st.subheader('Top 5 Categorias mas vendidas')
 render_stacked_line_chart()
