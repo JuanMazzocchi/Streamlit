@@ -5,3 +5,4 @@ numpy
 prophet
 mplcyberpunk
 streamlit-echarts>=0.4.0
+plotly>=5.18.0
