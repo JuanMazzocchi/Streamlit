@@ -21,8 +21,22 @@ print(plt.style.available)
 st.markdown(
     """
     <style>
-        section {
-            background-color: #000000; /* Puedes cambiar el color a tu preferencia */
+        .st-emotion-cache-18ni7ap{
+            background-color: #0b00ff;
+                background-image: 
+                radial-gradient(at 47% 33%, hsl(235.19, 100%, 50%) 0, transparent 59%), 
+                radial-gradient(at 82% 65%, hsl(242.27, 100%, 50%) 0, transparent 55%);
+        }
+        .main {
+                background-color: #0b00ff;
+                background-image: 
+                radial-gradient(at 47% 33%, hsl(235.19, 100%, 50%) 0, transparent 80%), 
+                radial-gradient(at 10% 10%, hsl(131.90, 100%, 50%) 0, transparent 55%);
+
+
+        }
+        .st-emotion-cache-16txtl3{
+            background-color:'light-gray';
         }
            /* Cambia el color del título (h1) */
          h1 {
@@ -159,12 +173,18 @@ def render_basic_line():
             "xAxis": {
                 "type": "category",
                 "data":data['ds'].tolist(),
+                "axisLabel": {"color": "white"}
             },
-            "yAxis": {"type": "value"},
+            "yAxis": {"type": "value"}, "axisLabel": {"color": "white"},
             "series": [
                 {"data": data['y'].tolist(), "type": "line"}
             ],
-        }
+            "backgroundColor": 'rgba(0,0,0,0)',
+            "color":'green',
+            
+            }
+            
+        
         st_echarts(
             options=options, height="400px",
         )
@@ -345,6 +365,6 @@ render_stacked_line_chart()
 st.subheader(f'Prediccion de Categoria: {stock} ')
 st.subheader(f'Estado : {estados}')
 st.pyplot(catXestado(stock,estados,periods))
-
+st.subheader('Sin maximos y minimos')
 st.plotly_chart(catXestado(stock,estados,periods), use_container_width=True )
  
