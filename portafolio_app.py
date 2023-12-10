@@ -12,7 +12,8 @@ import json
 # import matplotlib.dates as mdates
 import plotly.express as px
 
-plt.style.use("dark_background")
+plt.style.use("seaborn-v0_8-bright")
+print(plt.style.available)
 ###########################
 #### Funciones Principales
 ###########################
@@ -83,49 +84,7 @@ def get_data(stock):
 from streamlit_echarts import st_echarts
 from streamlit_echarts import JsCode
 
- 
-def plot_close_price(data):
-
-
-
-    
-    # background = plt.imread('assets/logo_source.png')
-    # logo = plt.imread('assets/pypro_logo_plot.png')
-    font = {'family': 'sans-serif',
-        'color':  'white',
-        'weight': 'normal',
-        'size': 16,
-        }
-
-    font_sub = {'family': 'sans-serif',
-        'color':  'white',
-        'weight': 'normal',
-        'size': 10,
-        }
-    options={
-        'tooltip':{'trigger': 'axis'}
-    }
-
-
-    fig = plt.figure(figsize=(10,6))
-    plt.plot(data.ds, data.y, color='dodgerblue', linewidth=1)
-    mplcyberpunk.add_glow_effects()
-    # for level, ratio in zip(fib_levels, ratios):
-    #     plt.hlines(level, xmin=data.index[0], xmax=data.index[-1], colors='snow', linestyles='dotted',linewidth=0.9,label="{:.1f}%".format(ratio*100) )
-
-    plt.ylabel('Ventas USD')
-    plt.xticks(rotation=45,  ha='right')
-    ax = plt.gca()
-    #ax.figure.figimage(logo,  10, 1000, alpha=.99, zorder=1)
-    # ax.figure.figimage(background, 40, 40, alpha=.15, zorder=1)
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.spines['left'].set_visible(False)
-    ax.set_xticks([])
-    plt.grid(True,color='gray', linestyle='-', linewidth=0.2)
-    return fig
-
-    
+     
     
 def plot_prophet(data, n_forecast=1460):
     # data_prophet = data.reset_index().copy()
@@ -144,12 +103,15 @@ def plot_prophet(data, n_forecast=1460):
         
         forecast.loc[forecast.ds > '2020-01-01' , 'yhat_upper']*=1.4
         
-        
-        fig1 = m.plot(forecast)
+    
+
+        fig1=m.plot(forecast)
+        # background=plt.imread('assets/g7logo3.jpg')
         # background = plt.imread('assets/logo_source.png')
         mplcyberpunk.add_glow_effects()
         ax = plt.gca()
-        # ax.figure.figimage(background, 40, 40, alpha=.15, zorder=1)
+        # ax.patch.set_facecolor('white')
+        # ax.figure.figimage(background, 60, 60, alpha=.15, zorder=1)
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         ax.spines['left'].set_visible(False)
@@ -157,8 +119,11 @@ def plot_prophet(data, n_forecast=1460):
         plt.xticks(rotation=45,  ha='right')
         plt.ylabel('Ventas')
         plt.xlabel('Fecha')
+        fig1=plt.gcf()
+        fig1.set_facecolor('white')
+         
         plt.plot(forecast.ds, forecast.yhat, color='green', linewidth=0.5)
-        fig1.patch.set_facecolor('lightgray')
+         
         return fig1
         
         
@@ -340,12 +305,7 @@ with st.sidebar:
     estados=st.selectbox('Estados', ['Acre', ' Alagoas', ' Amazonas', 'Bahia', ' Ceara',' Distrito Federal', ' Espirito Santo', ' Goias', ' Maranhao',' Mato Grosso', ' Mato Grosso do Sul', ' Minas Gerais', ' Para',' Paraiba', 'Parana', ' Pernambuco', 'Pernambuco', ' Piaui','Rio de Janeiro', 'Rio Grande do Norte', 'Rio Grande do Sul',' Rondonia', ' Roraima', ' Santa Catarina', 'Sao Paulo',' Sergipe', ' Tocantins'], index=1)
     
     pandemia=st.checkbox('Añadir efecto pandemia', value=False)
-    # start_time = st.date_input(
-    #                 "Fecha de Inicio",
-    #                 datetime.date(2019, 7, 6))
-    # end_time = st.date_input(
-    #                 "Fecha Final",
-    #                 datetime.date(2022, 10, 6))
+    
     periods = st.number_input('Dias de Forecast (La muestra tiene 602)', value=1460, min_value=1, max_value=5000)
 
 
@@ -354,11 +314,7 @@ with st.sidebar:
 ###########################
 
 data = get_data(stock)
-plot_price = plot_close_price(data)
 
-# df_ret = daily_returns(data)
-# df_vol = returns_vol(df_ret)
-# plot_vol = plot_volatility(df_vol)
 
 plot_forecast = plot_prophet(data, periods)
 
@@ -378,9 +334,7 @@ st.pyplot(plot_forecast)
 
 st.subheader('Plotly')
  
-# st.plotly_chart(plot_forecast)
-# plooooty(data)
-# st.plotly_chart(imgPloyly(plooooty(data)))
+ 
  
 st.plotly_chart(plot_forecast, use_container_width=True, theme='streamlit')
 
