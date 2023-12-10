@@ -131,10 +131,11 @@ def plot_prophet(data, n_forecast=1460):
     # data_prophet = data.reset_index().copy()
     # data_prophet.rename(columns={'Date':'ds','Close':'y'}, inplace=True)
     if pandemia == True:
-        m = Prophet(yearly_seasonality= True, uncertainty_samples = 50, mcmc_samples=50, interval_width= 0.6)
+        m = Prophet(yearly_seasonality= True, uncertainty_samples = 500, mcmc_samples=50, interval_width= 0.6)
         m.fit(data[['ds','y']])
 
         future = m.make_future_dataframe(periods=n_forecast)
+        
         forecast = m.predict(future)
         
         forecast.loc[forecast.ds > '2020-01-01'  , 'yhat']*=1.4
@@ -142,6 +143,8 @@ def plot_prophet(data, n_forecast=1460):
         forecast.loc[forecast.ds > '2020-01-01'  , 'yhat_lower']*=1.4
         
         forecast.loc[forecast.ds > '2020-01-01' , 'yhat_upper']*=1.4
+        
+        
         fig1 = m.plot(forecast)
         # background = plt.imread('assets/logo_source.png')
         mplcyberpunk.add_glow_effects()
@@ -160,7 +163,7 @@ def plot_prophet(data, n_forecast=1460):
         
         
          
-    m = Prophet(yearly_seasonality= True, uncertainty_samples = 50, mcmc_samples=50, interval_width= 0.6)
+    m = Prophet(yearly_seasonality= True, uncertainty_samples = 500, mcmc_samples=50, interval_width= 0.6)
     m.fit(data[['ds','y']])
 
     future = m.make_future_dataframe(periods=n_forecast)
@@ -181,47 +184,6 @@ def plot_prophet(data, n_forecast=1460):
     plt.plot(forecast.ds, forecast.yhat, color='green', linewidth=0.5)
     return fig1
 
-    
-def prueba(data, n_forecast=1460):
-    # data_prophet = data.reset_index().copy()
-    # data_prophet.rename(columns={'Date':'ds','Close':'y'}, inplace=True)
-    if pandemia == True:
-        m = Prophet(yearly_seasonality= True, uncertainty_samples = 50, mcmc_samples=50, interval_width= 0.6)
-        m.fit(data[['ds','y']])
-
-        future = m.make_future_dataframe(periods=n_forecast)
-        forecast = m.predict(future)
-        
-        forecast.loc[forecast.ds > '2020-01-01'  , 'yhat']*=1.4
-        
-        forecast.loc[forecast.ds > '2020-01-01'  , 'yhat_lower']*=1.4
-        
-        forecast.loc[forecast.ds > '2020-01-01' , 'yhat_upper']*=1.4
-        
-        plt.plot(forecast['ds'],forecast['yhat'], label='Prediccion')
-        plt.plot(forecast['ds'],forecast['yhat_upper'], label='Max Prediccion')
-        plt.plot(forecast['ds'],forecast['yhat_lower'], label='Min Prediccion')
-        plt.fill_between(forecast['ds'], forecast['yhat_upper'],forecast['yhat_lower'], color='lightblue', alpha=0.3, label='Margenes de error')
-        plt.show()
-        
-        
-        
-         
-    m = Prophet(yearly_seasonality= True, uncertainty_samples = 50, mcmc_samples=50, interval_width= 0.6)
-    m.fit(data[['ds','y']])
-
-    future = m.make_future_dataframe(periods=n_forecast)
-    forecast = m.predict(future)
-    plt.plot(forecast['ds'],forecast['yhat'], label='Prediccion')
-    plt.plot(forecast['ds'],forecast['yhat_upper'], label='Max Prediccion')
-    plt.plot(forecast['ds'],forecast['yhat_lower'], label='Min Prediccion')
-    plt.fill_between(forecast['ds'], forecast['yhat_upper'],forecast['yhat_lower'], color='lightblue', alpha=0.3, label='Margenes de error')
-    plt.show()
-    
-     
-    
-# def imagen(forecast):
-    
     
     
         
@@ -328,16 +290,55 @@ def render_stacked_line_chart():
     # mplcyberpunk.add_glow_effects()
     st_echarts(options=options, height="400px",theme='dark')
     
- 
+def catXestado( stock, estado,periods=1460 ):
+
+    df=pd.read_csv('data/Tabla1FinalCorrejida.csv', sep=';')
+    df['order_purchase_timestamp']=pd.to_datetime(df['order_purchase_timestamp'])
+    df['fecha']= df['order_purchase_timestamp'].dt.date
+    print(stock+'   '+ estado)
+    # print(df.head())
+    
+    dfCat=df[df['product_category_name']== stock]
+    dfCatEst=dfCat[dfCat['Estados']==estado]
+    
+    dfCatEst['fecha']=pd.to_datetime(dfCatEst['fecha'])
+    dfCatEst=dfCatEst.groupby('fecha')['price'].sum().reset_index()
+    dfCatEst.reset_index(level=0,inplace=True)
+    dfCatEst.rename(columns={'fecha':'ds','price':'y'}, inplace=True)
+    
+    m = Prophet(yearly_seasonality= True, uncertainty_samples = 50, mcmc_samples=50, interval_width= 0.6)
+    m.fit(dfCatEst[['ds','y']])
+
+    future = m.make_future_dataframe(periods=periods)
+    forecast = m.predict(future)
+    fig2 = m.plot(forecast)
+    # background = plt.imread('assets/logo_source.png')
+    # mplcyberpunk.add_glow_effects()
+    ax = plt.gca()
+    # ax.figure.figimage(background, 40, 40, alpha=.15, zorder=1)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    plt.grid(True,color='white', linestyle='-', linewidth=0.6)
+    plt.xticks(rotation=45,  ha='right')
+    plt.ylabel('Ventas')
+    plt.xlabel('Fecha')
+    
+    plt.plot(forecast.ds, forecast.yhat, color='green', linewidth=0.5)
+    return fig2
+    
     
 ###########################
 #### LAYOUT - Sidebar
 ###########################
 
 logo_pypro = Image.open('assets/g7logo3.jpg')
+
 with st.sidebar:
     st.image(logo_pypro)
     stock = st.selectbox('Categoria', ['Belleza y Salud', 'Auto', 'Ocio y Deportes','Accesorios de Computadoras', 'Decoración de muebles','Mesa, Baño , Cama', 'Cosas Interesantes','Artículos para el hogar', 'Relojes y Regalos', 'Juguetes'], index=1)
+    estados=st.selectbox('Estados', ['Acre', ' Alagoas', ' Amazonas', 'Bahia', ' Ceara',' Distrito Federal', ' Espirito Santo', ' Goias', ' Maranhao',' Mato Grosso', ' Mato Grosso do Sul', ' Minas Gerais', ' Para',' Paraiba', 'Parana', ' Pernambuco', 'Pernambuco', ' Piaui','Rio de Janeiro', 'Rio Grande do Norte', 'Rio Grande do Sul',' Rondonia', ' Roraima', ' Santa Catarina', 'Sao Paulo',' Sergipe', ' Tocantins'], index=1)
+    
     pandemia=st.checkbox('Añadir efecto pandemia', value=False)
     # start_time = st.date_input(
     #                 "Fecha de Inicio",
@@ -387,7 +388,9 @@ st.subheader('Top 5 Categorias mas vendidas')
 render_stacked_line_chart()
 
 
-st.subheader('Tabla Estudiada')
- 
+st.subheader(f'Prediccion de Categoria: {stock} ')
+st.subheader(f'Estado : {estados}')
+st.pyplot(catXestado(stock,estados,periods))
 
-st.dataframe(data)
+st.plotly_chart(catXestado(stock,estados,periods), use_container_width=True )
+ 
