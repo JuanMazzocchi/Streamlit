@@ -13,7 +13,7 @@ import json
 import plotly.express as px
 
 plt.style.use("seaborn-v0_8-bright")
-print(plt.style.available)
+# print(plt.style.available)
 ###########################
 #### Funciones Principales
 ###########################
@@ -319,12 +319,12 @@ logo_pypro = Image.open('assets/g7logo3.jpg')
 
 with st.sidebar:
     st.image(logo_pypro)
-    stock = st.selectbox('Categoria', ['Belleza y Salud', 'Auto', 'Ocio y Deportes','Accesorios de Computadoras', 'Decoración de muebles','Mesa, Baño , Cama', 'Cosas Interesantes','Artículos para el hogar', 'Relojes y Regalos', 'Juguetes'], index=1)
+    stock = st.selectbox('Categorías', ['Belleza y Salud', 'Auto', 'Ocio y Deportes','Accesorios de Computadoras', 'Decoración de muebles','Mesa, Baño , Cama', 'Cosas Interesantes','Artículos para el hogar', 'Relojes y Regalos', 'Juguetes'], index=1)
     estados=st.selectbox('Estados', ['Acre', ' Alagoas', ' Amazonas', 'Bahia', ' Ceara',' Distrito Federal', ' Espirito Santo', ' Goias', ' Maranhao',' Mato Grosso', ' Mato Grosso do Sul', ' Minas Gerais', ' Para',' Paraiba', 'Parana', ' Pernambuco', 'Pernambuco', ' Piaui','Rio de Janeiro', 'Rio Grande do Norte', 'Rio Grande do Sul',' Rondonia', ' Roraima', ' Santa Catarina', 'Sao Paulo',' Sergipe', ' Tocantins'], index=1)
     
     pandemia=st.checkbox('Añadir efecto pandemia', value=False)
     
-    periods = st.slider('Dias de Forecast', value=1460, min_value=602, max_value=3000)
+    periods = st.slider('Días de Forecast', value=1460, min_value=602, max_value=3000)
 
 
 ###########################
@@ -342,27 +342,27 @@ plot_forecast = plot_prophet(data, periods)
 #### LAYOUT - Render Final
 ###########################
 
-st.title(f"Prediccion de Ventas : {stock}")
+st.title(f"Predicción de Ventas : {stock}")
 
-st.subheader('Ventas por dia historicas')
+st.subheader('Ventas por día históricas')
 render_basic_line()
 
-st.subheader('Forecast - Prophet')
+st.subheader('Forecast - Prophet de ventas por día')
 st.pyplot(plot_forecast)
 
-st.subheader('Plotly, sin Maximos ni minimos')
+st.subheader('Forecast - Plotly, sin Máximos ni mínimos')
  
  
  
 st.plotly_chart(plot_forecast, use_container_width=True, theme='streamlit')
 
-st.subheader('Top 5 Categorias mas vendidas')
+st.subheader('Top 5 Categorías más vendidas históricas')
 render_stacked_line_chart()
 
 
-st.subheader(f'Prediccion de Categoria: {stock} ')
+st.subheader(f'Predicción de Categoría: {stock} (Ventas por día)')
 st.subheader(f'Estado : {estados}')
 st.pyplot(catXestado(stock,estados,periods))
-st.subheader('Sin maximos y minimos')
+st.subheader('Sin Máximos ni mínimos')
 st.plotly_chart(catXestado(stock,estados,periods), use_container_width=True )
  
