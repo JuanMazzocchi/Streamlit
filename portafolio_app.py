@@ -350,7 +350,7 @@ render_basic_line()
 st.subheader('Forecast - Prophet')
 st.pyplot(plot_forecast)
 
-st.subheader('Plotly')
+st.subheader('Plotly, sin Maximos ni minimos')
  
  
  
