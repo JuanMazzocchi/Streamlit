@@ -22,15 +22,13 @@ st.markdown(
     """
     <style>
         .st-emotion-cache-18ni7ap{
-            background-color: #0b00ff;
-                background-image: 
-                radial-gradient(at 47% 33%, hsl(235.19, 100%, 50%) 0, transparent 59%), 
-                radial-gradient(at 82% 65%, hsl(242.27, 100%, 50%) 0, transparent 55%);
+            background-color:rgba(0,0,0,0);
+                 
         }
         .main {
                 background-color: #0b00ff;
                 background-image: 
-                radial-gradient(at 47% 33%, hsl(235.19, 100%, 50%) 0, transparent 80%), 
+                radial-gradient(at 47% 33%, hsl(260.90, 86%, 35%) 0, transparent 80%), 
                 radial-gradient(at 10% 10%, hsl(131.90, 100%, 50%) 0, transparent 55%);
 
 
@@ -326,7 +324,7 @@ with st.sidebar:
     
     pandemia=st.checkbox('Añadir efecto pandemia', value=False)
     
-    periods = st.number_input('Dias de Forecast (La muestra tiene 602)', value=1460, min_value=1, max_value=5000)
+    periods = st.slider('Dias de Forecast', value=1460, min_value=602, max_value=3000)
 
 
 ###########################
